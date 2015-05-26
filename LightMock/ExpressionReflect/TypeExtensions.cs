@@ -1,14 +1,15 @@
 ﻿namespace ExpressionReflect
 {
 	using System;
+	using System.Reflection;
 
-	internal static class TypeExtensions
+    internal static class TypeExtensions
 	{
 		internal static bool IsFunc(this Type type)
 		{
 			bool isFunc = false;
 
-			if (type.IsGenericType)
+			if (type.GetTypeInfo().IsGenericType)
 			{
 				Type definition = type.GetGenericTypeDefinition();
 				isFunc = definition == typeof(Func<>) ||
@@ -25,7 +26,7 @@
 		{
 			bool isAction = type == typeof(Action);
 
-			if (type.IsGenericType)
+			if (type.GetTypeInfo().IsGenericType)
 			{
 				Type definition = type.GetGenericTypeDefinition();
 
@@ -43,7 +44,7 @@
 		{
 			bool isPredicate = false;
 
-			if (type.IsGenericType)
+            if (type.GetTypeInfo().IsGenericType)
 			{
 				Type definition = type.GetGenericTypeDefinition();
 				isPredicate = definition == typeof(Predicate<>);

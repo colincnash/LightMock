@@ -85,9 +85,9 @@ namespace ExpressionReflect
 
 			var executor = new ExpressionReflectionExecutor(node);
 
-			Type[] genericArguments = type.GetGenericArguments();
+			Type[] genericArguments = type.GetTypeInfo().GenericTypeArguments;
 			MethodInfo methodInfo = this.FindMethod(methodName, genericArguments);
-			@delegate = Delegate.CreateDelegate(type, executor, methodInfo);
+		    @delegate = methodInfo.CreateDelegate(type, executor);
 
 			return this.VisitConstant(Expression.Constant(@delegate));
 
@@ -112,7 +112,7 @@ namespace ExpressionReflect
 			if (memberInfo is PropertyInfo)
 			{
 				object target = null;
-				if (!((PropertyInfo)memberInfo).GetGetMethod().IsStatic)
+				if (!((PropertyInfo)memberInfo).GetMethod.IsStatic)
 				{
 					target = this.GetValueFromStack();
 				}
@@ -307,7 +307,7 @@ namespace ExpressionReflect
 			object target = this.GetValueFromStack();
 			Type isType = b.TypeOperand;
 
-			bool value = isType.IsInstanceOfType(target);
+		    bool value = target.GetType().GetTypeInfo().IsAssignableFrom(isType.GetTypeInfo());
 			this.data.Push(value);
 
 			return expression;
@@ -540,7 +540,7 @@ namespace ExpressionReflect
 		{
 			MethodInfo result = null;
 
-			IEnumerable<MethodInfo> methods = this.GetType().GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).Where(x => x.Name == name);
+		    IEnumerable<MethodInfo> methods = this.GetType().GetRuntimeMethods().Where(m => !m.IsPublic && !m.IsStatic);
 			foreach (MethodInfo method in methods)
 			{
 				// create the generic method
